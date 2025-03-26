@@ -1,9 +1,7 @@
 #include <gtest/gtest.h>
+#include "../src/app/lefosh.hpp"
 
-TEST(Example, ExampleTest) {
-  EXPECT_EQ(1, 1);
+TEST(ShellRead, ShellRead_S) {
+  ASSERT_EQ("ls", shell_read());
 }
 
-TEST(Example, ExampleTest2) {
-  EXPECT_EQ(1, 11);
-}
