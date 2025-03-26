@@ -1,4 +1,4 @@
-#include "lefosh.h"
+#include "lefosh.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -7,16 +7,6 @@
 
 
 #define INPUT_MAX_SIZE 100
-
-
-int main(int argc, char** argv) {
-    
-    shell_loop();
-
-    return EXIT_SUCCESS;
-
-
-}
 
 
 void shell_loop(void) {
@@ -39,7 +29,7 @@ void shell_loop(void) {
 
 
 char* shell_read(void) {
-    char* input = malloc(sizeof(char) * INPUT_MAX_SIZE);
+    char* input = (char*)malloc(sizeof(char) * INPUT_MAX_SIZE);
 
     if (!input) {
         perror("[!] shell_read\n\t-- Error: malloc failed");
