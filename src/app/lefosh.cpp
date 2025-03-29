@@ -63,16 +63,17 @@ char* shell_read(void) {
 char** shell_split_args(char* input) {
     unsigned int position = 0;
     // unsigned int arg_start=;
+    char** args;
 
     while (input[position] != '\0') {
         if (input[position] == ' ') {
-            printf("gay");
+            
         }
 
         position++;
     }
 
-
+    return NULL;
 }
 
 bool shell_exec() {

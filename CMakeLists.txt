@@ -19,6 +19,7 @@ set(Sources
 )
 
 add_executable(${PROJECT_NAME} ${Sources} src/app/main.cpp)
+install (TARGETS ${PROJECT_NAME} DESTINATION bin)
 add_library(${PROJECT_NAME}_static STATIC ${Sources})
 
 add_subdirectory(tests)
