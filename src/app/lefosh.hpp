@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 
+
+#define INPUT_MAX_SIZE 100
+
 /**
  * Shell is an infinite loop that reads, parses the arguments, and executes the command
  * This function implements this infinite loop

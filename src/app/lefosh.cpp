@@ -6,7 +6,6 @@
 #include <unistd.h>
 
 
-#define INPUT_MAX_SIZE 100
 
 
 void shell_loop(void) {
