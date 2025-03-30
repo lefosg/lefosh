@@ -26,21 +26,36 @@ class StdinMock {
 				_original_stdin = nullptr;
 			}
 		}
-  private:
-      static FILE* _original_stdin;
+	private:
+		static FILE* _original_stdin;
 };
   
 FILE* StdinMock::_original_stdin = nullptr;
 
 //no spaces in input
 TEST(ShellReadLength, NormalInput) {
-	StdinMock::setInput("ls\n");
-
+	StdinMock::setInput("ls");
 	char* input = shell_read();
-
 	StdinMock::restore();
 
 	size_t len = strnlen(input, INPUT_MAX_SIZE);
 	ASSERT_EQ(2, len);
 }
 
+TEST(ShellReadLength, NoTrailingSpace) {
+	StdinMock::setInput("ls ");
+	char* input = shell_read();
+	StdinMock::restore();
+
+	size_t len = strnlen(input, INPUT_MAX_SIZE);
+	ASSERT_EQ(2, len);
+}
+
+TEST(ShellReadLength, OnlyOneSpaceBetweenArgs) {
+	StdinMock::setInput("python3  -m     http.server");
+	char* input = shell_read();
+	StdinMock::restore();
+
+	size_t len = strnlen(input, INPUT_MAX_SIZE);
+	ASSERT_EQ(22, len);
+}
