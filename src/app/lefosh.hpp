@@ -15,6 +15,7 @@ void shell_loop(void);
  */
 char* shell_read(void);
 
+
 /**
  * Splits the arguments, one by one in an 'array of pointers'
  * @param input from the shell_read function

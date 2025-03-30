@@ -38,6 +38,7 @@ char* shell_read(void) {
 
     int c;
     int pos=0;
+    bool prev_space = false;
     while (true) {
         c = fgetc(stdin);
         if (c == EOF || c == '\n' || pos == INPUT_MAX_SIZE) {
@@ -52,6 +53,16 @@ char* shell_read(void) {
             break;
         }
         else {
+            if (c == ' ' && !prev_space) {
+                input[pos] = c;
+                prev_space = true;
+                pos++;
+                continue;
+            } else if (c == ' ' && prev_space) {
+                continue;
+            } else {
+                prev_space = false;
+            }
             input[pos] = c;
         }
         pos++;
