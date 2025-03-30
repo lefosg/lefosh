@@ -49,10 +49,14 @@ char* shell_read(void) {
                     c = getchar();
                 }
             }
+            if (input[pos-1] == ' ') {
+                input[pos-1] = '\0';
+                break;
+            }
             input[pos] = '\0';
             break;
         }
-        else {
+        else {  //input sanitization: do not store sequences of spaces among arguments, eg "ls   -la" = "ls -la"
             if (c == ' ' && !prev_space) {
                 input[pos] = c;
                 prev_space = true;
@@ -60,14 +64,12 @@ char* shell_read(void) {
                 continue;
             } else if (c == ' ' && prev_space) {
                 continue;
-            } else {
-                prev_space = false;
-            }
+            } 
+            prev_space = false;
             input[pos] = c;
         }
         pos++;
     }
-    
     return input;
 }
 
