@@ -16,10 +16,9 @@ void shell_loop(void) {
 
     do {
         printf("> ");
-        input = shell_read();
+        input = shell_read(); if (strncmp(input, "", strnlen(input, INPUT_MAX_SIZE)) == 0) continue;
         args = shell_split_args(input);
         // status = shell_exec(args);
-
         printf("\n");
         free(input);
         // free(args);
@@ -73,21 +72,33 @@ char* shell_read(void) {
 }
 
 char** shell_split_args(char* input) {
-    unsigned int position = 0;
-    // unsigned int arg_start=;
-    char** args;
-
-    while (input[position] != '\0') {
-        if (input[position] == ' ') {
-            
-        }
-
-        position++;
+    int bufsize = NUM_ARGS;
+    char **args = (char**)malloc(NUM_ARGS * sizeof(char*));
+    char *token = strtok(input, TOKEN_DELIMITER);
+    if (token == NULL) {
+        perror("[!] shell_split_args\n\t-- Error: could not get first argument");
+        exit(EXIT_FAILURE);
     }
+    
+    unsigned int i=0;
+    while (token != NULL) {
+        args[i] = token;
+        i++;
+        if (i >= bufsize) {
+            bufsize = bufsize * 2;
+            args = (char**)realloc(args, bufsize * sizeof(char*));
+            if (args == NULL) {
+                perror("[!] shell_split_args\n\t-- Error: could not allocate more space for the args buffer");
+                exit(EXIT_FAILURE);
+            }
+        }
+        token = strtok(NULL, TOKEN_DELIMITER);
+    }
+    args[i] = NULL;
 
-    return NULL;
+    return args;
 }
 
 bool shell_exec() {
-
+    
 }
