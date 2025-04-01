@@ -92,3 +92,22 @@ TEST(ShellSplitArgs, SplitTwoArgs) {
 	ASSERT_STREQ("-la", args[1]);
 	ASSERT_EQ(NULL, args[2]);
 }
+
+TEST(ShellSplitArgs, Split10Args) {
+	StdinMock::setInput("python3 run.py this py file has way too many parameters");
+	char* input = shell_read();
+	StdinMock::restore();
+
+	char **args = shell_split_args(input);
+	ASSERT_STREQ("python3", args[0]);
+	ASSERT_STREQ("run.py", args[1]);
+	ASSERT_STREQ("this", args[2]);
+	ASSERT_STREQ("py", args[3]);
+	ASSERT_STREQ("file", args[4]);
+	ASSERT_STREQ("has", args[5]);
+	ASSERT_STREQ("way", args[6]);
+	ASSERT_STREQ("too", args[7]);
+	ASSERT_STREQ("many", args[8]);
+	ASSERT_STREQ("parameters", args[9]);
+	ASSERT_EQ(NULL, args[10]);
+}
