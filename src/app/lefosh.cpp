@@ -4,24 +4,28 @@
 #include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
-
-
+char user[USER_MAX];
+char hostname[HOSTNAME_MAX];
+char workdir[WORKDIR_MAX];
 
 void shell_loop(void) {
+
+    initialize_shell();
 
     char* input;
     char** args;
     bool status = true;
 
     do {
-        printf("> ");
+        print_shell_prompt();
         input = shell_read(); if (strncmp(input, "", strnlen(input, INPUT_MAX_SIZE)) == 0) continue;
         args = shell_split_args(input);
-        // status = shell_exec(args);
-        printf("\n");
+        status = shell_exec(args);
+
         free(input);
-        // free(args);
+        free(args);
     } while(status);
 }
 
@@ -99,6 +103,59 @@ char** shell_split_args(char* input) {
     return args;
 }
 
-bool shell_exec() {
-    
+bool shell_exec(char** args) {
+    return shell_launch(args);
+}
+
+
+int shell_launch(char** args) {
+    pid_t pid, wpid;
+    int status;
+
+    pid = fork();
+    if (pid == 0) { //then we are in the child proc
+        if (execvp(args[0], args) == -1) {
+            perror("[!] shell_launch\n\t-- Error: execvp returned -1");
+        }
+        exit(EXIT_FAILURE);
+    } else if (pid < 0) {  //parnet process
+        perror("[!] shell_launch\n\t-- Error: fork failed");
+    } else {  //parent process
+        do {
+            wpid = waitpid(pid, &status, WUNTRACED);  //waits for a specific pid to change state
+        } while (wpid == 0);  // or do while !WIFEXITED(status) && !WIFSIGNALED(status)
+        // wait(NULL);  //this works as well, waits for any child process to terminate
+      
+    }
+
+    return 1;
+}
+
+void initialize_shell() {
+    char* tmpuser = getlogin();
+    if (tmpuser == NULL) {
+        perror("[!] initialize_shell\n\t-- Error: could not get user");
+        exit(EXIT_FAILURE);
+    }
+    strncpy(user, tmpuser, USER_MAX);  //get user
+    gethostname(hostname, HOSTNAME_MAX);  //get user
+    if (hostname == NULL) {
+        perror("[!] initialize_shell\n\t-- Error: could not get hostname");
+        exit(EXIT_FAILURE);   
+    }
+    if (getcwd(workdir, WORKDIR_MAX) == NULL) {
+        perror("[!] initialize_shell\n\t-- Error: could not get working dir");
+        exit(EXIT_FAILURE);
+    }
+}
+
+void print_shell_prompt() { 
+    if (user == NULL || hostname == NULL || workdir == NULL) {
+        perror("[!] initialize_shell\n\t-- Error: cannot print shell prompt");
+        exit(EXIT_FAILURE);
+    }
+    printf(COL_GRN "%s@%s",user, hostname);
+    printf(COL_RESET ":");
+    printf(COL_BLU "%s", workdir);
+    printf(COL_RESET "$ ");
 }
